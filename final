@@ -1,0 +1,122 @@
+<%@ page language="java" import="java.util.*,java.sql.*,java.io.*,javax.servlet.*,javax.servlet.http.* "
+	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<h1 style="text-align: center;">CRUD JSP</h1>
+<style>
+#d2, #d3, #d4, #d5, #d7, #d8, #d9, #d {
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	height: 5vh;
+}
+</style>
+
+</head>
+<body>
+	
+	<center>
+		<form onsubmit='fun()'>
+			<div id="d1">
+				<label for="m">mode</label> <input type="text" id="m">
+				<div id="d2">
+					<lable for="l1">emp id</lable>
+					<input type="text" id="t1">
+
+
+
+				</div>
+				<div id="d3">
+					<lable for="l2">emp name</lable>
+					<input type="text" id="t2">
+
+				</div>
+				<div id="d4">
+					<lable for="l3">job</lable>
+					<input type="text" id="t3">
+				</div>
+				<div id="d5">
+					<lable for="l4">salary</lable>
+					<input type="text" id="t4">
+				</div>
+
+				<br> <br> <br> <br>
+				<div id="d7">
+					<input type="submit" name="but" value='first'> <input
+						type="submit" name="but" value='prev'> <input
+						type="submit" name="but" value='next'> <input type="submit"
+						value='last'>
+				</div>
+				<div id="d8">
+					<input type="submit" value='add'> <input type="submit"
+						value='del'> <input type="submit" value='edit'> <input
+						type="submit" value='save'>
+				</div>
+				<div id="d9">
+					<input type="submit" value='search'> <input type="submit"
+						value='exit'> <input type="submit" value='clear'>
+				</div>
+		</form>
+	</center>
+	<%
+	HttpSession sessio = request.getSession();
+	int cur=0;
+	if(sessio.getAttribute("count")==null)
+{
+	cur=1;
+}
+else{
+	cur=(int)sessio.getAttribute("count");
+}
+
+	String but = request.getParameter("but");
+		Connection conn;
+	Statement stat;
+	ResultSet rs;
+	String query = null;
+	String emp = "";
+	
+
+	try {
+
+		Class.forName("org.postgresql.Driver");
+		conn = DriverManager.getConnection("jdbc:postgresql://192.168.110.48:5432/plf_training", "plf_training_admin",
+		"pff123");
+		stat = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+
+		if (but.equals("first")) {
+			cur=1;
+			sessio.setAttribute("count",cur);
+			query = "select * from empp_pp limit 1;";
+			rs = stat.executeQuery(query);
+			while (rs.next()) {
+		System.out.println("helo");
+		emp = rs.getString(2);
+			}
+		}
+		if (but.equals("next")) {
+			cur=cur+1;
+			sessio.setAttribute("count",cur);
+			System.out.println(cur);
+			query = "select * from empp_pp limit " +cur;
+			rs = stat.executeQuery(query);
+			while (rs.next()) {
+		emp = rs.getString(2);
+			}
+		}
+	} catch (Exception e) {
+		System.out.println("jdbc" + e);
+	}
+	
+	%>
+	<script>
+		var xx= document.getElementById("t2");
+		xx.value="<%=emp%>";
+		console.log("<%=emp%>");
+	</script>
+
+</body>
+</html>
